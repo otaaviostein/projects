@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html ng-app="baseApp" ng-controller="mainController">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="src/styles/global.css">
+    <link rel="stylesheet" href="src/styles/content.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-chart.js/1.0.2/angular-chart.min.js"></script>
+    <script src="src/scripts/scripts.js"></script>
+    <script src="src/scripts/services/getProjects.js"></script>
+    <script src="src/scripts/services/getActivities.js"></script>
+	
+
+
+    <title>Teste Fullstack</title>
+</head>
+<body>
+    <header>
+        <nav class="nav box-shadow">
+            <a href="#"><h3>Meus Projetos</h3></a>
+        </nav>
+    </header>
+    
+    <section id="content-body">
+		<div class="left-col">
+			<table ng-if="projects_json.length > 0">
+				<tr>
+					<th>ID</th>
+					<th>Projeto</th>
+					<th>Data de início</th>
+					<th>Data final</th>
+					<th>% Completo</th>
+					<th>Atrasado?</th>
+					<th> - </th>
+				</tr>
+				<tr ng-repeat="projects in projects_json | startFromProject:currentPageProject*pageSizeProject | limitTo:pageSizeProject" ng-click="getActivities(projects.projectId)">
+					<td ng-class="{'selected-row': selected == projects.projectId}">#{{projects.projectId}}</td>
+					<td ng-class="{'selected-row': selected == projects.projectId}">{{projects.projectName}}</td>
+					<td ng-class="{'selected-row': selected == projects.projectId}">{{projects.projectStartDate | date: 'dd/MM/yyyy' }}</td>
+					<td ng-class="{'selected-row': selected == projects.projectId}">{{projects.projectEndDate | date: 'dd/MM/yyyy' }}</td>
+					<td ng-class="{'selected-row': selected == projects.projectId}">{{projects.percentage}}%</td>
+					<td ng-class="{'selected-row': selected == projects.projectId}">
+						<span ng-if="activity_dates[0] > projects.projectEndDate">Sim</span>
+						<span ng-if="activity_dates[0] < projects.projectEndDate">Não</span>
+					</td>
+					<td ng-class="{'selected-row': selected == projects.projectId}"><button class="button delete-button" ng-click="deleteProjectModal(projects.projectId)"><i class="fas fa-trash"></i></button></td>
+				</tr>
+			</table>
+			<span>
+				<button class="button add-button" ng-click="addProjectsModal()"><i class="fas fa-plus"></i></button>
+			</span>
+		</div>
+		
+		<div class="right-col">
+			<div class="loading" ng-if="loadingActivity">
+				<i class="fas fa-spinner fa-2x fa-spin"></i>
+			</div>
+			<table ng-if="!loadingActivity && activities_json.length > 0">
+				<tr>
+					<th>ID</th>
+					<th>ID Projeto</th>
+					<th>Nome</th>
+					<th>Data de Início</th>
+					<th>Data Final</th>
+					<th>Finalizado?</th>
+					<th></th>
+					<th></th>
+				</tr>
+				<tr ng-repeat="activity in activities_json | startFromActivity:currentPageActivity*pageSizeActivity | limitTo:pageSizeActivity">
+					<td>#{{activity.activityId}}</td>
+					<td>#{{activity.activityProjectId}}</td>
+					<td>{{activity.activityName}}</td>
+					<td>{{activity.activityStartDate | date: 'dd/MM/yyyy' }}</td>
+					<td>{{activity.activityEndDate | date: 'dd/MM/yyyy' }}</td>
+					<td>
+						<span ng-if="activity.activityFinished == '0'">Não</span>
+						<span ng-if="activity.activityFinished == '1'">Sim</span>
+					</td>
+					<td><button class="button finish-button" ng-disabled="activity.activityFinished == '1'" ng-click="finishActivity(activity.activityId)"><i class="fas fa-check"></i></button></td>
+				</tr>
+			</table>
+			<span>
+				<button class="button add-button" ng-disabled="!projectId" ng-click="addActivitiesModal(projectId)"><i class="fas fa-plus"></i></button>
+			</span>
+		</div>
+    </section>
+
+    <section id="footer">
+        <h5>Copyright &#169; Otávio 2021</h5>
+    </section>
+
+
+	<div class="modal fade" id="add-project-modal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+		  	<div class="modal-content">
+				<div class="modal-header">
+			  		<h5 class="modal-title">Cadastrar Projeto</h5>
+			  		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+			  		</button>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="" ng-submit="addProject($event)" id="add-project-form">
+						<div class="form-group">
+				  			<label for="projectName" class="col-form-label">Nome:</label>
+				  			<input 
+							  	type="text" 
+								class="form-control" 
+								id="projectName"
+								name="projectName"
+								ng-model="projectName"
+								required
+								>
+						</div>
+						<div class="form-group">
+							<label for="projectStartDate">Data de início:</label>
+							<input 
+								type="date" 
+								class="form-control" 		
+								id="projectStartDate" 
+								name="projectStartDate"
+								ng-model="projectStartDate"
+								required
+							>
+						</div>
+						<div class="form-group">
+							<label for="">Data final:</label>
+							<input 
+								type="date" 
+								class="form-control"
+								id="projectEndDate" 
+								name="projectEndDate" 
+								ng-model="projectEndDate"
+								min="{{projectStartDate | date:'yyyy-MM-dd'}}"
+								ng-disabled="!projectStartDate"
+								required
+							>
+						</div>
+						<div class="modal-footer">
+							  <button type="submit" id="salvar" class="btn btn-primary">
+								  <i class="fa fa-save"></i> Salvar
+							</button>
+						</div>
+			  		</form>
+				</div>
+		  	</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="delete-project-modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Tem certeza que deseja excluir esse projeto?</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						Cancelar
+					</button>
+					<button type="submit" id="delete" ng-click="deleteProject(projectId, $event)" class="btn btn-danger">
+						<i class="fa fa-times"></i> Excluir
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="add-activity-modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Cadastrar atividade para projeto #{{activityProjectId}}</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="" ng-submit="addActivity($event)" id="add-project-form">
+						<div class="form-group">
+							<label for="">Nome:</label>
+							<input type="text" name="activityName" id="activityName" 
+								value=""
+								ng-model="activityName"
+								class="form-control"
+								required
+							>
+						</div>
+						<div class="form-group">
+							<label for="">Data de início:</label>
+							<input type="date" name="activityStartDate" 		id="activityStartDate" 
+								value="" 
+								ng-model="activityStartDate"
+								class="form-control"
+								required
+							>
+						</div>
+						<div class="form-group">
+							<label for="">Data final:</label>
+							<input type="date" name="activityEndDate" id="activityEndDate" 
+								value="" 
+								ng-model="activityEndDate"
+								class="form-control"
+								required
+							>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" id="salvar" class="btn-salvar btn btn-primary">
+								<i class="fa fa-save"></i> Salvar
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
