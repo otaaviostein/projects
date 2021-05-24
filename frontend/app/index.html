@@ -27,7 +27,12 @@
     </header>
     
     <section id="content-body">
-		<div class="left-col">
+		<div class="column left-col">
+			<div class="no-item-message">
+				<span ng-if="projects_json.length == 0">
+					Você ainda não possui projetos cadastrados
+				</span>
+			</div>
 			<table ng-if="projects_json.length > 0">
 				<tr>
 					<th>ID</th>
@@ -38,15 +43,15 @@
 					<th>Atrasado?</th>
 					<th> - </th>
 				</tr>
-				<tr ng-repeat="projects in projects_json | startFromProject:currentPageProject*pageSizeProject | limitTo:pageSizeProject" ng-click="getActivities(projects.projectId)">
+				<tr ng-repeat="projects in projects_json | orderBy: projectId" ng-click="getActivities(projects.projectId)">
 					<td ng-class="{'selected-row': selected == projects.projectId}">#{{projects.projectId}}</td>
 					<td ng-class="{'selected-row': selected == projects.projectId}">{{projects.projectName}}</td>
 					<td ng-class="{'selected-row': selected == projects.projectId}">{{projects.projectStartDate | date: 'dd/MM/yyyy' }}</td>
 					<td ng-class="{'selected-row': selected == projects.projectId}">{{projects.projectEndDate | date: 'dd/MM/yyyy' }}</td>
 					<td ng-class="{'selected-row': selected == projects.projectId}">{{projects.percentage}}%</td>
 					<td ng-class="{'selected-row': selected == projects.projectId}">
-						<span ng-if="activity_dates[0] > projects.projectEndDate">Sim</span>
-						<span ng-if="activity_dates[0] < projects.projectEndDate">Não</span>
+						<span ng-if="projects.latestActivity['activityEndDate'] > projects.projectEndDate">Sim</span>
+						<span ng-if="projects.latestActivity['activityEndDate'] <= projects.projectEndDate">Não</span>
 					</td>
 					<td ng-class="{'selected-row': selected == projects.projectId}"><button class="button delete-button" ng-click="deleteProjectModal(projects.projectId)"><i class="fas fa-trash"></i></button></td>
 				</tr>
@@ -56,9 +61,14 @@
 			</span>
 		</div>
 		
-		<div class="right-col">
+		<div class="column right-col">
 			<div class="loading" ng-if="loadingActivity">
-				<i class="fas fa-spinner fa-2x fa-spin"></i>
+				<i class="fas fa-spinner fa-2x fa-spin loading"></i>
+			</div>
+			<div class="no-item-message">
+				<span ng-if="activities_json.length == 0 && !loadingActivity">
+					Você ainda não possui atividades cadastradas
+				</span>
 			</div>
 			<table ng-if="!loadingActivity && activities_json.length > 0">
 				<tr>
@@ -71,7 +81,7 @@
 					<th></th>
 					<th></th>
 				</tr>
-				<tr ng-repeat="activity in activities_json | startFromActivity:currentPageActivity*pageSizeActivity | limitTo:pageSizeActivity">
+				<tr ng-repeat="activity in activities_json | orderBy: activityId">
 					<td>#{{activity.activityId}}</td>
 					<td>#{{activity.activityProjectId}}</td>
 					<td>{{activity.activityName}}</td>
@@ -87,6 +97,13 @@
 			<span>
 				<button class="button add-button" ng-disabled="!projectId" ng-click="addActivitiesModal(projectId)"><i class="fas fa-plus"></i></button>
 			</span>
+		</div>
+
+		<div class="column bottom-col">
+			<h5>Projetos</h5>
+			<canvas id="pie" class="chart chart-pie"
+  				chart-data="data" chart-labels="labels">
+			</canvas> 
 		</div>
     </section>
 
@@ -208,6 +225,8 @@
 								value="" 
 								ng-model="activityEndDate"
 								class="form-control"
+								min="{{activityStartDate | date:'yyyy-MM-dd'}}"
+								ng-disabled="!activityStartDate"
 								required
 							>
 						</div>

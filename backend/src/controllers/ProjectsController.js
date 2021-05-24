@@ -7,6 +7,10 @@ module.exports = {
 
 
         for (let i = 0; i < results.length; i++) {
+
+            const [activities_biggest_date] = await knex('activities').where('activityProjectId', results[i].projectId).orderBy('activityEndDate', 'desc');
+
+
             const [activities_finished] = await knex('activities').where('activityProjectId', results[i].projectId).where('activityFinished', true).count();
             const {count: finished} = activities_finished;
 
@@ -19,6 +23,11 @@ module.exports = {
 
             const percentage = Math.floor((finished / total) * 100);
             results[i].percentage = percentage;
+            if(activities_biggest_date) {
+                results[i].latestActivity = activities_biggest_date;
+            } else {
+                results[i].latestActivity = {};
+            }
 
         }
 

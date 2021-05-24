@@ -151,23 +151,37 @@ app.controller('mainController', [
         }
         
         $scope.getProjects = function() {
-            $scope.loadingProjects = true;
+            
+            $scope.incomplete_projects = 0;
+            $scope.complete_projects = 0;
 
             var projects = getProjects.getData();
             projects.then(function(result) {
-
                 $scope.projects_json = result;
+                
                 if($scope.projects_json.length != 0) {
                     $scope.getActivities($scope.projects_json[0].projectId);
                     $scope.projectId, $scope.selected = $scope.projects_json[0].projectId;
                 }
+
+                let incomplete_projects = 0;
+                let complete_projects = 0;
                 
                 angular.forEach(
                     $scope.projects_json, function(itm) {
-                        
+                        $scope.project_names.push(itm.projectName);
+                        if(itm.percentage == 100) {
+                            complete_projects++;
+                        } else {
+                            incomplete_projects++;
+                        }
                     }
                 );
-                $scope.loadingProjects = false;
+                $scope.incomplete_projects = Math.floor((incomplete_projects / $scope.projects_json.length) * 100);
+                $scope.complete_projects = Math.floor((complete_projects / $scope.projects_json.length) * 100);
+
+                $scope.labels = ['Atrasado', 'No Prazo'];
+                $scope.data = [$scope.incomplete_projects, $scope.complete_projects];
             });
         };
         $scope.getProjects();
@@ -185,24 +199,11 @@ app.controller('mainController', [
                 $scope.pageSizeActivity = 10;
                 $scope.activities_json = result;
                 $scope.loadingActivity = false;
-                console.log($scope.activities_json);
-                angular.forEach(
-                    $scope.activities_json, function(itm) {
-                        $scope.activity_dates.push(new Date(itm.activityEndDate).toJSON().slice(0, 10));
-                        
-                    }
-                );
                 
-                $scope.activity_dates.sort(function compare(a, b) {
-                    var dateA = new Date(a);
-                    var dateB = new Date(b);
-                    return dateB - dateA;
-                });
-                  
             });
         }
-        $scope.labels = $scope.project_names;
-        $scope.data = $scope.project_percentages;
+
+
 
     }
 ]);
