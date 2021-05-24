@@ -142,13 +142,6 @@ app.controller('mainController', [
             $scope.activityEndDate = "";
             return false;
         };
-
-        $scope.numberOfPagesProject = function() {
-            return Math.ceil($scope.projects_json.length/$scope.pageSizeProject);                
-        }
-        $scope.numberOfPagesActivity = function() {
-            return Math.ceil($scope.activities_json.length/$scope.pageSizeActivity);                
-        }
         
         $scope.getProjects = function() {
             
