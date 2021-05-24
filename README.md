@@ -22,16 +22,6 @@ CREATE DATABASE euax;
 
 ## Backend
 
-Para iniciar o backend da aplicação, precisará rodar as migrations para criar as tabelas que serão utilizadas.
-
-- Dentro da pasta "backend", executar o comando
-
-```html
-npx knex migrate:latest
-```
-
-isso fará com que todas as migrations sejam rodadas e as duas tabelas sejam criadas.
-
 - Para instalar as dependências, rodar o comando:
 
 ```html
@@ -43,6 +33,15 @@ ou
 ```html
 npm install
 ```
+
+- Executar o comando
+
+```html
+npx knex migrate:latest
+```
+
+isso fará com que todas as migrations sejam rodadas e as duas tabelas sejam criadas.
+
 
 - Por fim, executar o comando
 
