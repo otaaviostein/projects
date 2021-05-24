@@ -1,32 +1,5 @@
 # Desafio Fullstack
 
-## Requisitos
-
-- [x]  Usuário poderá criar um projeto
-- [x]  Usuário poderá criar uma atividade para o projeto escolhido
-- [x]  Usuário poderá listar um projeto específico junto com as atividades
-- [x]  Usuário poderá editar um projeto e as atividades dele
-- [x]  Usuário poderá excluir um projeto
-- [x]  Usuário poderá listar todos os projetos e atividades
-- [x]  Usuário poderá marcar uma atividade como concluída
-
-## Regras
-
-- [x]  Os campos "nome", "data início" e "data fim" do projeto devem ser obrigatórios
-- [x]  Os campos "id", "nome da atividade", "data inicio", "data fim" das atividades devem ser obrigatórios
-- [x]  Não deverá ser possível criar uma atividade em um projeto inexistente
-- [ ]  Mostrar a porcentagem de projetos já finalizados
-- [x]  Mostrar a porcentagem de andamento do projeto ( numero de atividades finalizadas x atividades não finalizadas )
-- [x]  Mostrar se o projeto terá atrasos ( data final do projeto deve ser comparada com a maior data final das atividades dele )
-- [x]  Ao excluir o projeto, as atividades dele serão excluídas também
-- [x]  As exclusões deverão ser confirmadas pelo usuários
-- [x]  A data de início do projeto deverá ser sempre menor que a data final
-- [x]  A data de início da atividade deverá ser sempre menor que a data final
-- [ ]  Ordenar as tabelas por id (ultimos por primeiro)
-- [ ]  Zerar valores do modal de cadastro de atividades
-
----
-
 ## Instalação do PostgreSQL
 
 - Fazer o download e instalação no link [https://www.postgresql.org/download/](https://www.postgresql.org/download/)
