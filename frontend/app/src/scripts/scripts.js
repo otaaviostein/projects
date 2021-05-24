@@ -134,11 +134,11 @@ app.controller('mainController', [
         /** Requisições */
         $scope.getProjects = function() {
             
-            $scope.incomplete_projects = 0;
-            $scope.complete_projects = 0;
+            $scope.late_projects = 0;
+            $scope.on_time_projects = 0;
 
-            let incomplete_projects = 0;
-            let complete_projects = 0;
+            let late_projects = 0;
+            let on_time_projects = 0;
 
             var projects = getProjects.getData();
             projects.then(function(result) {
@@ -151,18 +151,18 @@ app.controller('mainController', [
                 angular.forEach(
                     $scope.projects_json, function(itm) {
                         $scope.project_names.push(itm.projectName);
-                        if(itm.percentage == 100) {
-                            complete_projects++;
+                        if(itm.latestActivity.activityEndDate > itm.projectEndDate) {
+                            late_projects++;
                         } else {
-                            incomplete_projects++;
+                            on_time_projects++;
                         }
                     }
                 );
-                $scope.incomplete_projects = Math.floor((incomplete_projects / $scope.projects_json.length) * 100);
-                $scope.complete_projects = Math.floor((complete_projects / $scope.projects_json.length) * 100);
+                $scope.late_projects = Math.floor((late_projects / $scope.projects_json.length) * 100);
+                $scope.on_time_projects = Math.floor((on_time_projects / $scope.projects_json.length) * 100);
 
                 $scope.labels = ['Atrasados', 'No Prazo'];
-                $scope.data = [$scope.incomplete_projects, $scope.complete_projects];
+                $scope.data = [$scope.late_projects, $scope.on_time_projects];
             });
         };
         $scope.getProjects();

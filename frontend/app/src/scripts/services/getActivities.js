@@ -5,7 +5,6 @@ app.factory('getActivities', function($http) {
             url:"http://localhost:3333/activities?id="+id,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).then(function(result) {
-            console.log(result.data);
             return result.data;
         });
     };
