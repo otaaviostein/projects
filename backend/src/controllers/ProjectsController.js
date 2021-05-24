@@ -26,7 +26,7 @@ module.exports = {
             if(activities_biggest_date) {
                 results[i].latestActivity = activities_biggest_date;
             } else {
-                results[i].latestActivity = {};
+                results[i].latestActivity = [];
             }
 
         }
@@ -43,20 +43,6 @@ module.exports = {
                 projectEndDate
             });  
             return response.status(201).send();
-        } catch (error) {
-            next(error);
-        }
-    },
-    async update(request, response, next) {
-        try {
-            const { projectName, projectStartDate, projectEndDate } = request.body;
-            const { id } = request.params;
-
-            await knex('projects')
-            .update({ projectName, projectStartDate, projectEndDate })
-            .where({ projectId: id });
-
-            return response.send();
         } catch (error) {
             next(error);
         }

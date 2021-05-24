@@ -50,8 +50,6 @@ module.exports = {
     async update(request, response, next) {
         try {
             const { id } = request.params;
-            console.log(id);
-            console.log(request.params);
             await knex('activities')
             .update({ activityFinished: true })
             .where({ activityId: id });

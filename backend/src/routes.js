@@ -6,7 +6,6 @@ const ActivityController = require('./controllers/ActivitiesController')
 
 routes.get('/projects', ProjectController.index);
 routes.post('/projects', ProjectController.create);
-routes.put('/projects/:id', ProjectController.update);
 routes.delete('/projects/:id', ProjectController.delete);
 
 routes.get('/activities', ActivityController.index);
