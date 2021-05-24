@@ -25,9 +25,8 @@
             <a href="#"><h3>Meus Projetos</h3></a>
         </nav>
     </header>
-    
     <section id="content-body">
-		<div class="column left-col">
+		<div class="column left-col box-shadow">
 			<div class="no-item-message">
 				<span ng-if="projects_json.length == 0">
 					Você ainda não possui projetos cadastrados
@@ -61,7 +60,7 @@
 			</span>
 		</div>
 		
-		<div class="column right-col">
+		<div class="column right-col box-shadow">
 			<div class="loading" ng-if="loadingActivity">
 				<i class="fas fa-spinner fa-2x fa-spin loading"></i>
 			</div>
@@ -99,7 +98,7 @@
 			</span>
 		</div>
 
-		<div class="column bottom-col">
+		<div class="column bottom-col box-shadow">
 			<h5>Projetos</h5>
 			<canvas id="pie" class="chart chart-pie"
   				chart-data="data" chart-labels="labels">

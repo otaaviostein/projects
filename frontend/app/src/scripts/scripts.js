@@ -12,26 +12,28 @@ app.controller('mainController', [
         getActivities
     ) {
 
-        $scope.project_names = [];
-        $scope.project_percentages = [];
-        $scope.activity_dates = [];
 
+        /** Inicialização de variáveis */
+        $scope.project_names = [];
         $scope.projects_json = [];
         $scope.activities_json = [];
-
         $scope.selected = 0;
-        
-        $scope.active = 0;
-        $scope.loadingProjects = false;
         $scope.loadingActivity = false;
-        $scope.showActivity = false;
 
-
+        /** Modais */
         $scope.deleteProjectModal = function(projectId) {
             $scope.projectId = projectId;
             $("#delete-project-modal").modal("show");
         };
+        $scope.addProjectsModal = function() {
+            $("#add-project-modal").modal("show");
+        };
+        $scope.addActivitiesModal = function(activityProjectId) {
+            $scope.activityProjectId = activityProjectId;
+            $("#add-activity-modal").modal("show");
+        };
 
+        /** Eventos */
         $scope.deleteProject = function(projectId, e) {
             
             e.preventDefault();
@@ -49,9 +51,7 @@ app.controller('mainController', [
             });
             return false;
         };
-
-        $scope.finishActivity = function(activityId) {
-            
+        $scope.finishActivity = function(activityId) {          
             $http({
                 method: "PUT",
                 url: "http://localhost:3333/activities/"+activityId,
@@ -64,11 +64,6 @@ app.controller('mainController', [
             });
             return false;
         };
-
-        $scope.addProjectsModal = function() {
-            $("#add-project-modal").modal("show");
-        };
-
         $scope.addProject = function(e) {
             const projectName = $scope.projectName;
             const projectStartDate = new Date($scope.projectStartDate).toJSON().slice(0, 10);
@@ -101,13 +96,6 @@ app.controller('mainController', [
             $scope.projectEndDate = "";
             return false;
         };
-
-        $scope.addActivitiesModal = function(activityProjectId) {
-            console.log(activityProjectId);
-            $scope.activityProjectId = activityProjectId;
-            $("#add-activity-modal").modal("show");
-        };
-
         $scope.addActivity = function(e) {
             const activityName = $scope.activityName;
             const activityStartDate = new Date($scope.activityStartDate).toJSON().slice(0, 10);
@@ -142,11 +130,15 @@ app.controller('mainController', [
             $scope.activityEndDate = "";
             return false;
         };
-        
+
+        /** Requisições */
         $scope.getProjects = function() {
             
             $scope.incomplete_projects = 0;
             $scope.complete_projects = 0;
+
+            let incomplete_projects = 0;
+            let complete_projects = 0;
 
             var projects = getProjects.getData();
             projects.then(function(result) {
@@ -156,10 +148,6 @@ app.controller('mainController', [
                     $scope.getActivities($scope.projects_json[0].projectId);
                     $scope.projectId, $scope.selected = $scope.projects_json[0].projectId;
                 }
-
-                let incomplete_projects = 0;
-                let complete_projects = 0;
-                
                 angular.forEach(
                     $scope.projects_json, function(itm) {
                         $scope.project_names.push(itm.projectName);
@@ -173,45 +161,22 @@ app.controller('mainController', [
                 $scope.incomplete_projects = Math.floor((incomplete_projects / $scope.projects_json.length) * 100);
                 $scope.complete_projects = Math.floor((complete_projects / $scope.projects_json.length) * 100);
 
-                $scope.labels = ['Atrasado', 'No Prazo'];
+                $scope.labels = ['Atrasados', 'No Prazo'];
                 $scope.data = [$scope.incomplete_projects, $scope.complete_projects];
             });
         };
         $scope.getProjects();
-
         $scope.getActivities = function(id) {
-            $scope.activity_dates = [];
             $scope.loadingActivity = true;
-            $scope.showActivity = true;
-            $scope.projectId= id;
+            $scope.projectId = id;
             $scope.selected = id;
 
             var activity = getActivities.getData(id);
             activity.then(function(result) {
-                $scope.currentPageActivity = 0;
-                $scope.pageSizeActivity = 10;
                 $scope.activities_json = result;
                 $scope.loadingActivity = false;
                 
             });
         }
-
-
-
     }
 ]);
-
-app.filter('startFromProject', function() {
-    return function(input, start) {
-        start = +start;
-        return input.slice(start);
-    }
-});
-
-
-app.filter('startFromActivity', function() {
-    return function(input, start) {
-        start = +start;
-        return input.slice(start);
-    }
-});

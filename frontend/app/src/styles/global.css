@@ -14,18 +14,6 @@ i {
     color: #FFFFFF;
 }
 
-.box-shadow {
-    box-shadow: 4px 2px 6px 4px  rgba(58, 59, 69, .15);
-}
-
-.active {
-    color: #1CC88A !important;
-}
-
-#header {
-    width: 100%;
-}
-
 .nav {
     background-color: #FFFFFF;
     overflow: hidden;
@@ -38,6 +26,18 @@ i {
     padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
+}
+
+.box-shadow {
+    box-shadow: 4px 2px 6px 4px  rgba(58, 59, 69, .15);
+}
+
+.selected-row {
+    background-color: #cef1ef;
+}
+
+#header {
+    width: 100%;
 }
 
 #footer {
@@ -53,8 +53,4 @@ i {
     align-items: center;
     justify-content: center;
     font-weight: normal;
-}
-
-.loading {
-    color: #82838a;
 }

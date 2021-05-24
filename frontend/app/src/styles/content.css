@@ -12,16 +12,6 @@
     margin: 10px;
 }
 
-#content-body::after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-#content-body .left-col {
-    margin-right: 15px;
-}
-
 #content-body .no-item-message {
     color: #969696;
     width: 100%;
@@ -51,12 +41,13 @@
 }
 
 #content-body .finish-button {
-    background-color: #26A69A;
+    background-color: rgb(38, 166, 153);
     border-radius: 5px;
 }
 
 #content-body button:hover {
     cursor: pointer;
+    background-color: rgba(38, 166, 153, 70%);
 }
 
 #content-body .loading {
@@ -64,14 +55,11 @@
     align-items: center;
     justify-content: center;
     padding: 50px;
+    color: #82838a;
 }
 
 #content-body .left-col tr:hover {
     cursor: pointer;
-    background-color: #cef1ef;
-}
-
-.selected-row {
     background-color: #cef1ef;
 }
 
@@ -103,7 +91,7 @@ th {
 }
 
 @media screen and (max-width: 600px) {
-    .column  {
+    #content-body .column  {
         width: 100%;
     }
 }
